@@ -1,18 +1,20 @@
 const dvd = document.getElementById("dvd");
+const back = document.getElementById("back");
 const BASE_SPEED = 2;
 const HOVER_MULTIPLIER = 3;
+const SHRINK_FACTOR = 0.9; // Will reduce size by 10% each click
 
 let speed = BASE_SPEED;
-let x = window.innerWidth - dvd.offsetWidth; // Start at right side
-let y = 0; // Start at top
+let x = window.innerWidth - dvd.offsetWidth;
+let y = 0;
 let dx = speed;
 let dy = speed;
 let hasStartedBouncing = false;
+let currentScale = 1;
 
 // Add hover events
 dvd.addEventListener('mouseenter', () => {
 	if (!hasStartedBouncing) {
-		// First hover - teleport to bottom left
 		x = 0;
 		y = window.innerHeight - dvd.offsetHeight;
 		hasStartedBouncing = true;
@@ -27,16 +29,23 @@ dvd.addEventListener('mouseleave', () => {
 	dy = dy > 0 ? BASE_SPEED : -BASE_SPEED;
 });
 
+// Add click event on background
+back.addEventListener('click', () => {
+	if (hasStartedBouncing) {
+		currentScale *= SHRINK_FACTOR;
+		dvd.style.transform = `translate(${x}px, ${y}px) scale(${currentScale})`;
+	}
+});
+
 function animate() {
 	if (!hasStartedBouncing) {
-		// Keep it static in top right until first hover
-		dvd.style.transform = `translate(${x}px, ${y}px)`;
+		dvd.style.transform = `translate(${x}px, ${y}px) scale(${currentScale})`;
 		requestAnimationFrame(animate);
 		return;
 	}
 
-	const maxX = window.innerWidth - dvd.offsetWidth;
-	const maxY = window.innerHeight - dvd.offsetHeight;
+	const maxX = window.innerWidth - (dvd.offsetWidth * currentScale);
+	const maxY = window.innerHeight - (dvd.offsetHeight * currentScale);
 
 	x += dx;
 	y += dy;
@@ -51,7 +60,7 @@ function animate() {
 		y = y <= 0 ? 0 : maxY;
 	}
 
-	dvd.style.transform = `translate(${x}px, ${y}px)`;
+	dvd.style.transform = `translate(${x}px, ${y}px) scale(${currentScale})`;
 	requestAnimationFrame(animate);
 }
 
