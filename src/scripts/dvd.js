@@ -1,9 +1,23 @@
 const dvd = document.getElementById("dvd");
-const speed = 2;
+const BASE_SPEED = 2;
+const HOVER_MULTIPLIER = 3;
+
+let speed = BASE_SPEED;
 let x = 0;
 let y = 0;
 let dx = speed;
 let dy = speed;
+
+// Add hover events
+dvd.addEventListener('mouseenter', () => {
+	dx = dx > 0 ? BASE_SPEED * HOVER_MULTIPLIER : -BASE_SPEED * HOVER_MULTIPLIER;
+	dy = dy > 0 ? BASE_SPEED * HOVER_MULTIPLIER : -BASE_SPEED * HOVER_MULTIPLIER;
+});
+
+dvd.addEventListener('mouseleave', () => {
+	dx = dx > 0 ? BASE_SPEED : -BASE_SPEED;
+	dy = dy > 0 ? BASE_SPEED : -BASE_SPEED;
+});
 
 function animate() {
 	const maxX = window.innerWidth - dvd.offsetWidth;
@@ -30,6 +44,7 @@ function animate() {
 dvd.style.position = 'fixed';
 dvd.style.top = '0';
 dvd.style.left = '0';
+dvd.style.transition = 'transform 0.05s linear';
 
 // Start animation
 animate();
