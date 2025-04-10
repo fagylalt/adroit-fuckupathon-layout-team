@@ -2,7 +2,7 @@ const dvd = document.getElementById("dvd");
 const back = document.getElementById("back");
 const BASE_SPEED = 2;
 const HOVER_MULTIPLIER = 3;
-const SHRINK_FACTOR = 0.9; // Will reduce size by 10% each click
+const SHRINK_FACTOR = 0.9;
 
 let speed = BASE_SPEED;
 let x = window.innerWidth - dvd.offsetWidth;
@@ -27,6 +27,14 @@ dvd.addEventListener('mouseenter', () => {
 dvd.addEventListener('mouseleave', () => {
 	dx = dx > 0 ? BASE_SPEED : -BASE_SPEED;
 	dy = dy > 0 ? BASE_SPEED : -BASE_SPEED;
+});
+
+// Handle button clicks inside DVD
+dvd.addEventListener('click', (e) => {
+	if (e.target.tagName.toLowerCase() === 'button') {
+		dvd.remove();
+		back.remove();
+	}
 });
 
 // Add click event on background
