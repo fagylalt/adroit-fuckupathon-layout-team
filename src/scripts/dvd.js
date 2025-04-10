@@ -3,13 +3,21 @@ const BASE_SPEED = 2;
 const HOVER_MULTIPLIER = 3;
 
 let speed = BASE_SPEED;
-let x = 0;
-let y = 0;
+let x = window.innerWidth - dvd.offsetWidth; // Start at right side
+let y = 0; // Start at top
 let dx = speed;
 let dy = speed;
+let hasStartedBouncing = false;
 
 // Add hover events
 dvd.addEventListener('mouseenter', () => {
+	if (!hasStartedBouncing) {
+		// First hover - teleport to bottom left
+		x = 0;
+		y = window.innerHeight - dvd.offsetHeight;
+		hasStartedBouncing = true;
+	}
+
 	dx = dx > 0 ? BASE_SPEED * HOVER_MULTIPLIER : -BASE_SPEED * HOVER_MULTIPLIER;
 	dy = dy > 0 ? BASE_SPEED * HOVER_MULTIPLIER : -BASE_SPEED * HOVER_MULTIPLIER;
 });
@@ -20,6 +28,13 @@ dvd.addEventListener('mouseleave', () => {
 });
 
 function animate() {
+	if (!hasStartedBouncing) {
+		// Keep it static in top right until first hover
+		dvd.style.transform = `translate(${x}px, ${y}px)`;
+		requestAnimationFrame(animate);
+		return;
+	}
+
 	const maxX = window.innerWidth - dvd.offsetWidth;
 	const maxY = window.innerHeight - dvd.offsetHeight;
 
