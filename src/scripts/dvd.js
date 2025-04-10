@@ -6,7 +6,7 @@ const SHRINK_FACTOR = 0.9;
 
 let speed = BASE_SPEED;
 let x = window.innerWidth - dvd.offsetWidth;
-let y = 0;
+let y = window.innerHeight - dvd.offsetHeight;
 let dx = speed;
 let dy = speed;
 let hasStartedBouncing = false;
