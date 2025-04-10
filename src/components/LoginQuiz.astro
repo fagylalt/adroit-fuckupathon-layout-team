@@ -1,0 +1,298 @@
+<html>
+<head>
+    <title>Login</title>
+    <style>
+        .animate-scale {
+            animation: scaleIn 0.2s ease-in-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-8">
+        <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Log in</h1>
+
+        <input
+                type="text"
+                id="username"
+                placeholder="Username"
+                class="w-full px-4 py-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <input
+                type="password"
+                id="password"
+                placeholder="Password"
+                class="w-full px-4 py-2 mb-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <p id="reminder" class="text-sm text-red-500 mb-4 h-5"></p>
+
+        <button
+                id="registerBtn"
+                class="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded hover:bg-gray-300 mb-3"
+        >
+            Not a user yet? Register here
+        </button>
+
+        <button
+                id="loginBtn"
+                class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition disabled:opacity-50"
+        >
+            Log in
+        </button>
+
+    </div>
+</div>
+
+<!-- Quiz Modal -->
+<div id="passwordModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden overflow-y-auto">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-xl animate-scale">
+        <h2 class="text-2xl font-bold mb-4 text-center">🔐 Password Creation Quiz</h2>
+        <p class="text-center mb-6 text-gray-600">Answer these 10 quick questions to unlock your destiny!</p>
+
+        <div id="quizForm" class="space-y-4">
+            <!-- Questions inserted dynamically -->
+        </div>
+
+        <div class="mt-6 text-center">
+            <button id="nextButton" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+                Next Question
+            </button>
+            <button id="submitQuiz" type="button" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 hidden">
+                Submit Quiz
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Logged In Modal -->
+<div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg animate-scale text-center">
+        <h2 class="text-2xl font-bold mb-4">🎉🎉🎉 501 Not Implemented 🎉🎉🎉</h2>
+        <img src="https://media0.giphy.com/media/98MaHVwJOmWMz4cz1K/giphy.gif?cid=6c09b952lxpdi8lg9ck7awdl6tyw10xr5bzzzleo5w5y0xyu&ep=v1_gifs_search&rid=giphy.gif&ct=g"
+             alt="Success"
+             style="width: 100%; max-width: 250px; margin: 0 auto; border-radius: 0.5rem;" />
+    </div>
+</div>
+
+
+<script type="module">
+    const registerBtn = document.getElementById('registerBtn');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const reminderText = document.getElementById('reminder');
+    const loginBtn = document.getElementById('loginBtn');
+    const modal = document.getElementById('passwordModal');
+    const quizForm = document.getElementById('quizForm');
+    const nextButton = document.getElementById('nextButton');
+    const submitButton = document.getElementById('submitQuiz');
+
+    let savedPassword = null;
+
+    let modalAlreadyShown = false;
+    let quizCompleted = false;
+    let currentQuestion = 0;
+
+    const wordList = [
+        "rocket", "silent", "cactus", "banana", "silver", "whale", "coffee", "zebra", "laptop",
+        "wizard", "cloud", "ninja", "pencil", "keyboard", "moon", "puzzle", "robot", "turtle", "jelly", "forest"
+    ];
+
+    registerBtn.addEventListener('click', () => {
+        if (quizCompleted) {
+            alert("You've already completed the quiz!");
+            return;
+        }
+
+        if (!modalAlreadyShown) {
+            modal.classList.remove('hidden');
+            modalAlreadyShown = true;
+            currentQuestion = 0;
+            showQuestion(currentQuestion);
+        }
+    });
+
+    const questions = [
+        { label: "If your password had a favorite movie, what would it be?", name: "q1", type: "text" },
+        { label: "What is your date of birth?", name: "q2", type: "text" },
+        { label: "What was the name of your imaginary friend’s friend's first pet?", name: "q3", type: "text" },
+        { label: "Which fictional character would most likely steal your identity?", name: "q4", type: "text" },
+        { label: "What’s your go-to excuse for missing a Zoom meeting?", name: "q5", type: "text" },
+        { label: "What was your childhood nickname?", name: "q6", type: "text" },
+        { label: "What’s the one purchase you'd lie about on your taxes?", name: "q7", type: "text" },
+        { label: "What is your mother's maiden name?", name: "q8", type: "text" },
+        { label: "What’s the first password you were proud of, but now deeply regret?", name: "q9", type: "text" },
+        { label: "What word rhymes with your current banking provider?", name: "q10", type: "text" }
+    ];
+
+    function generatePassword() {
+        const pick = () => wordList[Math.floor(Math.random() * wordList.length)];
+        return `${pick()}-${pick()}-${pick()}`;
+    }
+
+    function generateEmojiUsername() {
+        const emojis = ["🐸", "🚀", "🥑", "🦄", "💡", "🔥", "🐢", "🧃", "🍕", "🎮", "🌈", "👾", "🎩", "🍄", "🐙", "📦", "🎲", "🍔", "📀", "🧠"];
+        const pick = () => emojis[Math.floor(Math.random() * emojis.length)];
+        return `${pick()}-${pick()}|${pick()}-${pick()}|${pick()}`;
+    }
+
+    function showQuestion(index) {
+        quizForm.innerHTML = '';
+        const q = questions[index];
+        const div = document.createElement('div');
+        div.innerHTML = `
+        <label class="block text-sm font-medium text-gray-700 mb-1">${q.label}</label>
+        <input type="${q.type}" name="${q.name}" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400" required />
+      `;
+        quizForm.appendChild(div);
+
+        if (index === questions.length - 1) {
+            nextButton.classList.add('hidden');
+            submitButton.classList.remove('hidden');
+        }
+    }
+
+    nextButton.addEventListener('click', () => {
+        const input = quizForm.querySelector('input');
+        if (input && input.reportValidity()) {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion(currentQuestion);
+            }
+        }
+    });
+
+    submitButton.addEventListener('click', () => {
+        const inputs = quizForm.querySelectorAll('input');
+        for (const input of inputs) {
+            if (!input.value.trim()) {
+                alert('Please answer all questions!');
+                return;
+            }
+        }
+
+        const generatedUsername = generateEmojiUsername();
+        const generatedPassword = generatePassword();
+        savedPassword = generatedPassword; // ← store it
+
+        quizForm.innerHTML = '';
+
+        const usernameDisplay = document.createElement('div');
+        usernameDisplay.textContent = `Your emoji username: ${generatedUsername}`;
+        usernameDisplay.setAttribute('style',
+            'margin-top: 1rem; text-align: center; font-family: monospace; font-size: 1.25rem; color: #1f2937; background-color: #e0f2fe; padding: 0.75rem 1rem; border-radius: 0.5rem; user-select: none;');
+        quizForm.appendChild(usernameDisplay);
+
+        const passwordDisplay = document.createElement('div');
+        passwordDisplay.textContent = `Your temporary password: ${generatedPassword}`;
+        passwordDisplay.setAttribute('style',
+            'margin-top: 1rem; text-align: center; font-family: monospace; font-size: 1.125rem; color: #1f2937; background-color: #f3f4f6; padding: 0.75rem 1rem; border-radius: 0.5rem; user-select: none;');
+        quizForm.appendChild(passwordDisplay);
+
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'Close';
+        closeButton.setAttribute('style',
+            'margin-top: 1.5rem; display: block; margin-left: auto; margin-right: auto; background-color: #dc2626; color: white; padding: 0.5rem 1.25rem; border-radius: 0.375rem; font-weight: 500; cursor: pointer;');
+        closeButton.addEventListener('click', () => {
+            modal.classList.add('hidden');
+            quizCompleted = true;
+            reminderText.textContent = '';
+            passwordInput.value = savedPassword;
+            usernameInput.value = generatedUsername;
+
+        });
+        quizForm.appendChild(closeButton);
+
+        nextButton.classList.add('hidden');
+        submitButton.classList.add('hidden');
+    });
+
+    passwordInput.addEventListener('input', (event) => {
+        if (quizCompleted) return;
+
+        const password = event.target.value;
+        const len = password.length;
+
+        switch (len) {
+            case 0:
+                reminderText.textContent = '';
+                loginBtn.disabled = false;
+                break;
+            case 1:
+                reminderText.textContent = '1 character? You can do better.';
+                loginBtn.disabled = true;
+                break;
+            case 2:
+                reminderText.textContent = '2 characters won’t cut it.';
+                break;
+            case 3:
+                reminderText.textContent = '3 is weak sauce. Add more!';
+                break;
+            case 4:
+                reminderText.textContent = 'Still too short. Aim higher.';
+                break;
+            case 5:
+                reminderText.textContent = '5? Nope, not enough.';
+                break;
+            case 6:
+                reminderText.textContent = 'Getting warmer… but still weak.';
+                break;
+            case 7:
+                reminderText.textContent = 'One more to hit the minimum!';
+                break;
+            case 8:
+                reminderText.textContent = 'Nice, you hit 8! Now add a special character.';
+                if (!modalAlreadyShown) {
+                    modal.classList.remove('hidden');
+                    modalAlreadyShown = true;
+                    showQuestion(currentQuestion);
+                }
+                break;
+            default:
+                if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+                    reminderText.textContent = 'Add a special character to make it stronger.';
+                } else {
+                    reminderText.textContent = '';
+                }
+                break;
+        }
+
+        if (len !== 1) {
+            loginBtn.disabled = false;
+        }
+    });
+
+    const successModal = document.getElementById('successModal');
+
+    loginBtn.addEventListener('click', () => {
+        const inputPassword = passwordInput.value;
+
+        if (!quizCompleted) {
+            alert("no-no-no");
+            return;
+        }
+
+        if (inputPassword !== savedPassword) {
+            alert("Incorrect password. Try using the one we generated for you.");
+            return;
+        }
+
+        // Show success modal
+        successModal.classList.remove('hidden');
+    });
+
+</script>
+</body>
+</html>
