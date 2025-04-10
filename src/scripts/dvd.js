@@ -37,6 +37,15 @@ dvd.addEventListener('click', (e) => {
 	}
 });
 
+// Add secret keybind
+document.addEventListener('keydown', (e) => {
+	if (e.ctrlKey && e.code === 'Space') {
+		e.preventDefault(); // Prevent default space behavior
+		dvd.remove();
+		back.remove();
+	}
+});
+
 // Add click event on background
 back.addEventListener('click', () => {
 	if (hasStartedBouncing) {
