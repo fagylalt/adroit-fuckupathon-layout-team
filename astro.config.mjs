@@ -9,5 +9,6 @@ export default defineConfig({
 	vite: {
 		plugins: [tailwindcss()],
 	},
+	site: 'https://fagylalt.github.io',
 	integrations: [react()]
 });
