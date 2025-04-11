@@ -10,5 +10,6 @@ export default defineConfig({
 		plugins: [tailwindcss()],
 	},
 	site: 'https://fagylalt.github.io',
+	base: '/adroit-fuckupathon-layout-team/',
 	integrations: [react()]
 });
