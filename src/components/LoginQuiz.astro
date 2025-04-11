@@ -21,6 +21,7 @@
 <body>
 <div class="min-h-screen flex items-center justify-center bg-gray-100 px-4">
     <div class="w-full max-w-md bg-white shadow-lg rounded-lg p-8">
+        <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Layout Team</h1>
         <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Log in</h1>
 
         <input
@@ -80,10 +81,10 @@
 <!-- Logged In Modal -->
 <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
     <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg animate-scale text-center">
-        <h2 class="text-2xl font-bold mb-4">🎉🎉🎉 501 Not Implemented 🎉🎉🎉</h2>
+        <h2 class="text-6xl font-bold mb-4">🎉🎉🎉 501 Not Implemented 🎉🎉🎉</h2>
         <img src="https://media0.giphy.com/media/98MaHVwJOmWMz4cz1K/giphy.gif?cid=6c09b952lxpdi8lg9ck7awdl6tyw10xr5bzzzleo5w5y0xyu&ep=v1_gifs_search&rid=giphy.gif&ct=g"
              alt="Success"
-             style="width: 100%; max-width: 250px; margin: 0 auto; border-radius: 0.5rem;" />
+             style="width: 100%; max-width: 350px; margin: 0 auto; border-radius: 0.5rem;" />
     </div>
 </div>
 
@@ -190,7 +191,7 @@
         quizForm.innerHTML = '';
 
         const usernameDisplay = document.createElement('div');
-        usernameDisplay.textContent = `Your emoji username: ${generatedUsername}`;
+        usernameDisplay.textContent = `Your  username: ${generatedUsername}`;
         usernameDisplay.setAttribute('style',
             'margin-top: 1rem; text-align: center; font-family: monospace; font-size: 1.25rem; color: #1f2937; background-color: #e0f2fe; padding: 0.75rem 1rem; border-radius: 0.5rem; user-select: none;');
         quizForm.appendChild(usernameDisplay);

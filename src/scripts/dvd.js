@@ -5,8 +5,8 @@ const HOVER_MULTIPLIER = 3;
 const SHRINK_FACTOR = 0.9;
 
 let speed = BASE_SPEED;
-let x = window.innerWidth - dvd.offsetWidth;
-let y = window.innerHeight - dvd.offsetHeight;
+let x = window.innerWidth - dvd.offsetWidth - 20;
+let y = window.innerHeight - dvd.offsetHeight - 20
 let dx = speed;
 let dy = speed;
 let hasStartedBouncing = false;
